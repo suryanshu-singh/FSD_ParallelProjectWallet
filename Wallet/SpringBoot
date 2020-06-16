@@ -1,0 +1,24 @@
+Spring Boot--
+	-Convention Over Configuration
+	-Opinionated
+	-Zero Effort Spring
+	-Bootstrap Spring
+	-Standalone apps
+	-Embedded servlet container
+	
+	sts(spring tools suite) //download
+	copy spring parent tag from internet 
+	download springboot-starter-web-dependency
+	if anything hangs or does not work well in sts, go to users/suryanshu singh/m2/repository and then delete all the files
+	make sure the eclipse and sts are closed while deleting the files of this folder.
+	
+	
+	
+	--RestController
+	
+	DOWNLOAD REST API CLIENT NAMED AS INSOMNIA
+	
+	Shortcut for Requestmapping(method="get") is @GetMapping
+	and for POST @PostMapping() and likewise for @PostMapping
+	
+MVC(Model View Controller)

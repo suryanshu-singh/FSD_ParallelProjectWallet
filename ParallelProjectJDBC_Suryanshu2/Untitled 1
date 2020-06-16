@@ -1,0 +1,183 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
+import com.ibm.walletapp.bean.CustomerDetails;
+
+public class Daoclass implements DaoInterface{
+	
+	
+public Daoclass() {
+	
+	
+		try {
+			dbCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/bankaccountdetails?serverTimezone=IST", "root", "");
+		//	System.out.println("Successfully connected");
+		} catch(Exception e) {
+			System.out.println("Could not connect to server");
+			
+		//	return "Could not connect to server";
+		}
+	} 
+
+	Date t=new Date();
+	
+	
+	
+	Connection dbCon;
+	PreparedStatement pstmt; 
+	PreparedStatement pstmt1;
+	PreparedStatement pstmt2;
+	PreparedStatement pstmt3;
+	PreparedStatement pstmt4;
+	PreparedStatement pstmt5;
+	
+	
+	
+	@Override
+	public void CreateAccount(CustomerDetails ref)
+	{
+		//int no=0;
+		
+		//CustomerDetails c=new CustomerClass(name,age)
+		
+		String insertQry = "insert into basicdetails(Name,Age,ContactNo,Address,PIN) values(?,?,?,?,?)";
+		String accQry="insert into balancedetails(contactNo) values(?)";
+		String acc1Qry="insert into transactiontable(ContactNo) values(?)";
+		
+		
+		try {
+			pstmt = dbCon.prepareStatement(insertQry);
+			pstmt.setString(1,ref.getName());
+			pstmt.setInt(2,ref.getAge());
+			pstmt.setString(3, ref.getContactNo());
+			pstmt.setString(4, ref.getAddress());
+			pstmt.setInt(5, ref.getPin());
+		
+		
+				if(pstmt.executeUpdate()>0)
+				{
+					System.out.println("Registered successfully");
+				}
+				else
+				{
+					System.out.println("Failed");
+				}
+					
+            }
+			
+			
+		 catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try
+		{
+			pstmt1 = dbCon.prepareStatement(accQry);
+			pstmt1.setString(1, ref.getContactNo());
+			
+			if(pstmt1.executeUpdate()>0)
+			{
+				System.out.println("Registered Successfully at ");
+			}
+			else
+			{
+				System.out.println("failed");
+			}
+		}catch(SQLException r)
+		{
+			r.printStackTrace();
+		}
+		
+		try
+		{
+			pstmt2 = dbCon.prepareStatement(acc1Qry);
+			pstmt2.setString(1, ref.getContactNo());
+			
+			if(pstmt2.executeUpdate()>0)
+			{
+				System.out.println("Registered Successfully at ");
+			}
+			else
+			{
+				System.out.println("failed");
+			}
+		}catch(SQLException b)
+		{
+			b.printStackTrace();
+		}
+		
+	}
+	
+public void Deposit(String ContactNo,int amount)
+	{
+		String depositQry="Update balancedetails set Balance=Balance+? where ContactNo=?";
+		
+		try
+		{
+			pstmt = dbCon.prepareStatement(depositQry);
+			pstmt.setInt(1, amount);
+			pstmt.setString(2,ContactNo);
+			
+			if(pstmt.executeUpdate()>0)
+				System.out.println("Balance successfully updated");
+			else
+				System.out.println("Could not update balance");
+			
+		}
+		catch(SQLException y)
+		{
+			y.printStackTrace();
+		}
+	
+	} 
+
+public void Withdraw(String ContactNo,int amount)
+{
+	String checkQry="select Balance from balancedetails where ContactNo=?";
+	String withdrawQry="Update balancedetails set Balance=Balance-? where ContactNo=?";
+	try
+	{
+		pstmt = dbCon.prepareStatement(checkQry);
+		pstmt.setString(1, ContactNo);
+		
+		
+		ResultSet rs = pstmt.executeQuery();
+		while(rs.next())
+		{
+			if(rs.getInt("Balance")<1000)
+			{
+				System.out.println("Low Balance");
+			}
+			break;
+		}
+		
+		
+	}catch(SQLException d)
+	{
+		d.printStackTrace();
+	}
+	
+	try
+	{
+		pstmt=dbCon.prepareStatement(withdrawQry);
+		
+		pstmt.setInt(1,amount);
+		pstmt.setString(2, ContactNo);
+		
+		if(pstmt.executeUpdate()>0)
+			System.out.println("Balance successfully updated");
+		else
+			System.out.println("Could not update balance");
+		
+	}
+	catch(SQLException y)
+	{
+		y.printStackTrace();
+	}
+
+}
